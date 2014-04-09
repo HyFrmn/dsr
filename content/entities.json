@@ -1,0 +1,30 @@
+{
+	"bases" : {
+		"pc" : ["chara"],
+		"door" : ["door"]
+	},
+	"data" : {
+		"chara" : {
+			"xform" : {},
+			"sprite" : { "src" : "orange", "offsety" : -16},
+			"physics" : {},
+			"movement" : {}	
+		},
+		"pc" : {
+			"inherit" : "chara",
+			"pc" : {}
+		},
+		"door" : {
+			"inherit" : "interact",
+			"xform" : {},
+			"sprite" : { "src" : "door", "offsety" : -16},
+			"script" : { "src" : "door.js" }
+		},
+		"interact" : {
+			"interact" : {},
+			"highlight" : {
+				"visible" : false
+			}
+		}
+	}
+}
