@@ -37,6 +37,12 @@ define(['sge','./core'], function(sge, core){
         },
         'script' : {
             'src' : null
+        },
+        'light' : {
+            type: 'point_small',
+            tint: 0xFFFFFF,
+            offsetx: 0,
+            offsety: 0
         }
     }
 
@@ -60,15 +66,15 @@ define(['sge','./core'], function(sge, core){
         return obj3;
     }
 
-    var Entity = sge.Class.extend({
+    var Entity = sge.Observable.extend({
         init: function(base, comp_data){
+            this._super();
             this.id = null;
             this._components = {};
 
             var comps = {};
             
             if (base!=undefined){
-                console.log(base)
                 base_data = Entity._data[base];
                 if (base_data.inherit){
 
@@ -86,21 +92,18 @@ define(['sge','./core'], function(sge, core){
                     while (inherit_stack.length>0){
                         comps = deepExtend(comps, inherit_stack.pop());
                     }
+                    comps = deepExtend(comps, comp_data);
                 } else {
-                    comps = base_data;
+                    comps = deepExtend(deepExtend({}, base_data), comp_data);
                 }
-                if (comps){
+
+                if (comps!=undefined){
                     var keys = Object.keys(comps);
                     keys.forEach(function(key){
                         if (key=="inherit"){
                             return
                         }
-                        var cd = deepExtend({}, comps[key]);
-                        if (comp_data[key]){
-                            cd = deepExtend(cd, comp_data[key]);
-                        }  
-                        this.addComponent(key, cd);
-                        console.log(this[key], base, key, cd);
+                        this.addComponent(key, comps[key]);
                     }.bind(this))
                 }
             }
@@ -117,7 +120,6 @@ define(['sge','./core'], function(sge, core){
     Entity._data = {}
     Entity._bases = {}
     Entity.load = function(data){
-        console.log(data.data)
         var keys = Object.keys(data.data);
         keys.forEach(function(key){
             Entity._data[key] = data.data[key];

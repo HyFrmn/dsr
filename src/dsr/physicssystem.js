@@ -6,7 +6,6 @@ define(['sge','./core', 'sat'], function(sge, core, sat){
 				this.map = null;
 			},
 			tick: function(delta, entities){
-							console.log(1)
 				entities.forEach(function(entity){
 					if (entity.physics){
 						this.move(entity, delta);

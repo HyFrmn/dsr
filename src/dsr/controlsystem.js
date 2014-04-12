@@ -22,6 +22,11 @@ define(['sge','./core'], function(sge, core, Entity){
 			if (this.state.input.isDown('down')){
 				this.state.pc.movement.vy = speed;
 			}
+
+			if (this.state.input.isPressed('F')){
+				console.log('Light')
+				this.state.pc.light.enabled = !this.state.pc.light.enabled;
+			}
 		}
 	})
 	return ControlSystem;

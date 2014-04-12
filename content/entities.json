@@ -12,18 +12,36 @@
 		},
 		"pc" : {
 			"inherit" : "chara",
-			"pc" : {}
+			"pc" : {},
+			"light"  : { "type" : "point_small", "offsety" : -16, "enabled" : true}
 		},
 		"door" : {
 			"inherit" : "interact",
 			"xform" : {},
 			"sprite" : { "src" : "door", "offsety" : -16},
-			"script" : { "src" : "door.js" }
+			"script" : { "src" : "door" },
+			"door" : { "open" : false, "locked" : false },
+			"connection" : {
+				"output" : false,
+				"default_input" : "toggle"
+			}
 		},
 		"interact" : {
 			"interact" : {},
 			"highlight" : {
 				"visible" : false
+			}
+		},
+		"switch" : {
+			"inherit" : "interact",
+			"xform" : {},
+			"sprite" : { "src" : "switch", "offsety" : -16},
+			"script" : { "src" : "switch" },
+			"switch" : { "toggle" : false },
+			"light"  : { "type" : "point_small", "offsety" : -6},
+			"connection" : {
+				"input" : "false",
+				"default_output" : "interact"
 			}
 		}
 	}

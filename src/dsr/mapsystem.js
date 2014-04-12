@@ -26,7 +26,6 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 
 	var MapSystem = core.DSRSystem.extend({
 		init: function(state){
-			console.log('MAP')
 			this.state = state;
 			this.tileSize = 32;
 			this.tiles = [];
@@ -39,6 +38,7 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 
 		},
 		createMap: function(level_data){
+
 			var layerData = {};
 			level_data.layers.forEach(function(layer){
 				layerData[layer.name] = layer;
@@ -52,9 +52,10 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 			var x = 0;
 			var y = 0;
 			var total = (this.width * this.height);
+
 			for (var i = total -1; i >= 0; i--) {
 				var tile = new Tile(x, y);
-				tile.layers.base = 0;
+				tile.layers.base = -1;
 				this.tiles.push(tile);
 				
 				tile.layers.base = layerData.base.data[this.getIndex(x,y)]-1;
@@ -81,17 +82,17 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					y++;
 				}
 			}
+
 			canopyMask.endFill();
 			this.canopyMask = canopyMask;
 			this.layerMask = layerMask;
 			this.container.addChild(canopyMask);
 			this.container.addChild(layerMask);
 			if (layerData.lights){
-				console.log(layerData.lights)
 				layerData.lights.objects.forEach(function(light){
 					var type = light.type;
-					var tx = light.x;// - light.width/2;
-					var ty = light.y;// - light.height/2;
+					var tx = light.x + light.width/2;
+					var ty = light.y + light.height/2;
 					var data = {type: type, tx: tx, ty: ty};
 					if (light.properties.tint){
 						data.tint = parseInt(light.properties.tint, 16);
@@ -99,20 +100,37 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					this.lights.push(data);
 				}.bind(this))
 			}
-			this.preRender();
 
+			this.preRender();
+			console.log(level_data)
 			if (layerData.entities){
 				layerData.entities.objects.forEach(function(entity_data){
 					
-					if (!Entity._bases[entity_data.type]){
+					if (!Entity._data[entity_data.type]){
+						console.error('Nothing found for Entity:', entity_data.type);
+                
 						return
 					}
-					var entity = new Entity(entity_data.type, {
+					var props = {
 						xform: {
 							tx: (entity_data.x + this.tileSize/2),
 							ty: (entity_data.y - this.tileSize/2)
 						}
-					});
+					};
+					var ks = Object.keys(entity_data.properties);
+					console.log(ks)
+					for (var i = ks.length - 1; i >= 0; i--) {
+						var key = ks[i];
+
+						var subdata = key.split('.');
+						if (props[subdata[0]]==undefined){
+							props[subdata[0]]={};
+						}
+						console.log(entity_data.properties[key])
+						props[subdata[0]][subdata[1]] = eval(entity_data.properties[key]);
+						console.log(props);
+					};
+					var entity = new Entity(entity_data.type, props);
 					
 					if (entity_data.type=='pc'){
 						this.state.pc = entity;
@@ -121,18 +139,13 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					this.state.addEntity(entity)
 				}.bind(this))
 			}
-			console.log('loadedMap')
 		},
 		load: function(url){
-			console.log('Loading.')
 			var defered = new sge.When.defer();
-			console.log('Loading..')
 			this.state.game.loader.loadJSON(url).then(function(data){
-				console.log('Loaded!!!')
 				this.createMap(data);
 				defered.resolve();
 			}.bind(this));
-			console.log('Loading...')
 			return defered.promise;
 		},
 		tick: function(delta){
@@ -173,7 +186,6 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 			var sex = Math.ceil(endX/this._chunkSize);
 			var scy = Math.floor(startY/this._chunkSize);
 			var sey = Math.ceil(endY/this._chunkSize);
-			///console.log(scx,scy,sex, sey)
 			for (var x=0; x<chunks[0]; x++){
 				for (var y=0; y<chunks[1]; y++){
 					if ((x>=scx) && (x<= sex) &&  y>= scy && y<=sey){
@@ -224,7 +236,7 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 				for (var y=chunkStartY; y<chunkEndY; y++){
 					var tile = this.getTile(x, y);
 					if (tile){
-						if (tile.layers.base!==undefined){
+						if (tile.layers.base>=0){
 							var sprite = new PIXI.Sprite.fromFrame('base_tiles-' + tile.layers.base);
 							sprite.position.x = (x*this.tileSize) - startX;
 							sprite.position.y = (y*this.tileSize) - startY;

@@ -30,7 +30,8 @@ define([
                 document.body.appendChild(canvas);
             	this.width = canvas.width;
             	this.height = canvas.height;
-	            
+	
+				            
 
 				this.renderer = null;
 
@@ -38,6 +39,7 @@ define([
 				this._states = {};
 				this._stateClassMap = {};
 				this._currentState = null;
+				this.current = null;
 				//Don't Support Canvas
 				this.renderer = new PIXI.WebGLRenderer(this.width, this.height, canvas);
 				this.input = new Input(canvas);
@@ -72,9 +74,7 @@ define([
 			},
 
 			tick: function(delta){
-				// @if DEBUG
-				stats.begin();
-				// @endif
+				
 				if (this._currentState){
 					this._currentState.tick(delta);
 				}
@@ -82,20 +82,25 @@ define([
 					this._changeState(this._nextState);
 					this._nextState=null;
 				}
+				
+			},
+
+			render: function(){
+				// @if DEBUG
+				stats.begin();
+				// @endif
+				requestAnimFrame(this.render.bind(this));
+				if (this._currentState){
+					this._currentState.render();
+				}
 				// @if DEBUG
 				stats.end();
 				// @endif
 			},
 
-			render: function(){
-				requestAnimFrame(this.render.bind(this));
-				if (this._currentState){
-					this._currentState.render();
-				}
-			},
-
 
 			setStateClass: function(name, klass){
+				this.current = name;
 				this._stateClassMap[name] = klass;
 			},
 			getState: function(name){

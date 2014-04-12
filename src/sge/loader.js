@@ -51,6 +51,15 @@ define([
                 });
                 return defered.promise;
             },
+            loadCode: function(url, that, locals) {
+                var defered = new when.defer();
+                ajax(url, function(text){
+                    defered.resolve(text);
+                }.bind(this), function(xmlHttp){
+                    defered.reject(xmlHttp);
+                });
+                return defered.promise;
+            },
             loadFont: function(url){
                 var defered = new when.defer();
                 var loader = new PIXI.AssetLoader([url]);

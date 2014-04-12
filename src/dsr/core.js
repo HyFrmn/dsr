@@ -13,6 +13,8 @@ define([
             }
         })
 
+        var _loadAssetCallbacks = [];
+
         var DSRSystem = sge.Class.extend({
             init: function(state){
                 this.state = state;
@@ -27,8 +29,11 @@ define([
             render: function(){},
         })
 
+        var addLoadCallback = function(func){
+            _loadAssetCallbacks.push(func);
+        }
+
         var loadAssets = function(loader, manifest){
-            console.log('Loading!!', loader, manifest)
             var promises = [];
             if (manifest.tiles){
                 manifest.tiles.forEach(function(url){
@@ -45,13 +50,17 @@ define([
                     promises.push(loader.loadJSON(url).then(Entity.load));
                 });
             }
+            for (var i = _loadAssetCallbacks.length - 1; i >= 0; i--) {
+                _loadAssetCallbacks[i](loader, manifest, promises);
+            };
             return sge.When.all(promises);
         }
 
         return {
             DSRState : DSRState,
             DSRSystem : DSRSystem,
-            loadAssets : loadAssets
+            loadAssets : loadAssets,
+            addLoadCallback : addLoadCallback
         }
     }
 )

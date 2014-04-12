@@ -8,9 +8,20 @@ define([
 		'./physicssystem',
 		'./lightsystem',
 		'./interactsystem',
-		'./scriptsystem'
+		'./scriptsystem',
+		'./hudsystem'
 	], 
-	function(sge, core, Entity, RenderSystem, MapSystem, ControlSystem, PhysicsSystem, LightSystem, InteractSystem, ScriptSystem){
+	function(   sge,
+				core,
+				Entity,
+				RenderSystem,
+				MapSystem,
+				ControlSystem,
+				PhysicsSystem,
+				LightSystem,
+				InteractSystem,
+				ScriptSystem,
+				HudSystem){
 	
 	var PlayState = core.DSRState.extend({
 		STAGE_COLOR: 0x000000,
@@ -18,6 +29,7 @@ define([
 			this._super(game, options);
 			this._eid = 1;
 			this._entities = {};
+			this._entityNames = {};
 			this._systems = {};
 			this._systemNames = [];
 			//Intialize Game Play Graphics
@@ -34,6 +46,7 @@ define([
 			this.addSystem('physics', PhysicsSystem);
 			this.addSystem('render', RenderSystem);
 			this.addSystem('light', LightSystem);
+			this.addSystem('hud', HudSystem);
 			
 			//Chain Startup
 			this.getSystem('map').load('content/levels/tech_demo_a.json').then(this.startGame.bind(this));
@@ -48,7 +61,6 @@ define([
 			this.game.changeState('game');
 		},
 		addSystem: function(type, klass){
-			console.log(type, klass)
 			this._systems[type] = new klass(this);
 			this._systemNames.splice(0,0,type);
 			return this._systems[type];
@@ -59,6 +71,9 @@ define([
 		addEntity: function(entity){
 			entity.id = this._eid++;
 			this._entities[entity.id] = entity;
+			if (entity.name){
+				this._entityNames[entity.name] = entity;
+			}
 			return entity;
 		},
 		removeEntity: function(){
@@ -70,6 +85,12 @@ define([
 				this._systems[systems[i]].render(delta);
 			};
 			this._super(delta);
+		},
+		getEntities: function(){
+			var entities = Object.keys(this._entities).map(function(key){
+			    return this._entities[key];
+			}.bind(this));
+			return entities;
 		},
 		tick: function(delta){
 			var entities = Object.keys(this._entities).map(function(key){

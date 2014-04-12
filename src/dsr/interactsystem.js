@@ -43,7 +43,7 @@ define(['sge','./core', './entity'], function(sge, core, Entity){
 					if (!this._isInteracting){
 						this._isInteracting = true;	
 						this._interactEntity.highlight.color = 0xFF0000;
-						this._interactEntity.sprite.visible = !this._interactEntity.sprite.visible;
+						this._interactEntity.trigger('interact')
 					}
 				} else {
 					this._isInteracting = false;

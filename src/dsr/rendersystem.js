@@ -26,6 +26,7 @@ define(['sge','./core'], function(sge, core, Entity){
 								highlight = new PIXI.Graphics();
 								highlight.beginFill(0xFFFFFF);
 								highlight.drawCircle(0,0,32,32);
+								highlight.drawCircle(0,-64,32,32);
 								highlight.endFill();
 								this.floorContainer.addChild(highlight);
 								this._highlights[entity.id] = highlight;
@@ -52,6 +53,7 @@ define(['sge','./core'], function(sge, core, Entity){
 						console.log(entity.sprite.src + '-' + entity.sprite.frame);
 						this._sprites[entity.id]=sprite;
 					}
+					sprite.setTexture(PIXI.TextureCache[entity.sprite.src + '-' + entity.sprite.frame])
 					sprite.visible = entity.sprite.visible;
 					sprite.position.x = entity.xform.tx + entity.sprite.offsetx - sprite.width/2;
 					sprite.position.y = entity.xform.ty + entity.sprite.offsety - sprite.height/2;

@@ -10,13 +10,14 @@ define(['sge','./core'], function(sge, core, Entity){
 
 			this.fog = new PIXI.Graphics();
 			
+			this._lights = {};
 			
 		},
 		setup: function(){
 			this.map = this.state.getSystem('map');
 
 			this.shadow = new PIXI.Graphics();
-			this.shadow.beginFill(0x333333);
+			this.shadow.beginFill(0x111111);
 			this.shadow.drawRect(0,0, this.map.width*this.map.tileSize, this.map.height*this.map.tileSize);
 			this.shadow.endFill();
 
@@ -24,20 +25,15 @@ define(['sge','./core'], function(sge, core, Entity){
 			this.shadowTexture = new PIXI.RenderTexture(this.map.width*this.map.tileSize, this.map.height*this.map.tileSize);
 			this.shadowSprite = new PIXI.Sprite(this.shadowTexture);
 			this.shadowSprite.blendMode = PIXI.blendModes.MULTIPLY;
-			//this.shadowSprite.mask = map.canopyMask;
+			this.shadowSprite.mask = map.canopyMask;
 			this.container.addChild(this.fog);
 			this.container.addChild(this.shadowSprite);
 
-			this.flashLight = new PIXI.Sprite.fromFrame('flashlight_basic-0');
-			//this.flashLight.scale.x = 2;
-			//this.flashLight.scale.y = 2;
-			this.flashLight.blendMode = PIXI.blendModes.ADD;
-			this.shadowContainer.addChild(this.flashLight)
 			//*
 			this.map.lights.forEach(function(light){
-				lightSprite = new PIXI.Sprite.fromFrame('point_small-0');
-				lightSprite.position.x = light.tx;
-				lightSprite.position.y = light.ty;
+				lightSprite = new PIXI.Sprite.fromFrame(light.type + '-0');
+				lightSprite.position.x = light.tx - lightSprite.width/2;
+				lightSprite.position.y = light.ty - lightSprite.height/2;
 				if (light.tint){
 					lightSprite.tint = light.tint
 				}
@@ -45,6 +41,15 @@ define(['sge','./core'], function(sge, core, Entity){
 				this.shadowContainer.addChild(lightSprite);
 			}.bind(this));
 			//*/
+		},
+		addLight: function(entity){
+			var sprite = lightSprite = new PIXI.Sprite.fromFrame(entity.light.type + '-0');
+			sprite.position.x = entity.xform.tx  - sprite.width/2;
+			sprite.position.y = entity.xform.ty  - sprite.height/2;
+			sprite.blendMode = PIXI.blendModes.ADD;
+			this.shadowContainer.addChild(sprite);
+			this._lights[entity.id] = sprite;
+			return sprite
 		},
 		_foo: true,
 		tick: function(delta, entities){
@@ -54,13 +59,14 @@ define(['sge','./core'], function(sge, core, Entity){
 
 			var pct = this.map.getTileAtPos(this.state.pc.xform.tx,this.state.pc.xform.ty);
 			if (pct.data.blocker){
-				pct = this.map.getTile(pct.x, pct.y+1)
+				console.log('Block')
+				pct = this.map.getTile(pct.x, pct.y-1)
 			}
 			if (!pct.data.blocker){
 				this._foo = false;
 				this.lightFillScanline(
-					Math.floor(this.state.pc.xform.tx/32),
-					Math.floor(this.state.pc.xform.ty/32),
+					Math.floor(pct.x),
+					Math.floor(pct.y),
 					this.map.width,
 					this.map.height-1,
 					false,
@@ -124,8 +130,24 @@ define(['sge','./core'], function(sge, core, Entity){
 			}.bind(this));
 			//*/
 			this.fog.endFill();
-			this.flashLight.position.x = this.state.pc.xform.tx - 128;
-			this.flashLight.position.y = this.state.pc.xform.ty - 128;
+			
+			for (var i = entities.length - 1; i >= 0; i--) {
+				var entity = entities[i];
+				if (entity.light){
+					if (this._lights[entity.id]===undefined){
+						this.addLight(entity);
+					}
+					var sprite = this._lights[entity.id];
+					sprite.position.x = entity.xform.tx   - sprite.width/2 + entity.light.offsetx;
+					sprite.position.y = entity.xform.ty   - sprite.height/2 + entity.light.offsety;
+					if (entity.light.tint){
+						sprite.tint = entity.light.tint;
+					}
+					if (entity.light.enabled!==undefined){
+						sprite.visible = entity.light.enabled;
+					}
+				}
+			};
 		},
 		render: function(){
 			this.shadowTexture.render(this.shadowContainer);
