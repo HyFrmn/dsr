@@ -9,8 +9,13 @@ define(['sge','./core'], function(sge, core, Entity){
 				var entity = entities[i];
 				if (entity.script!==undefined){
 					var src = entity.script.src;
-					console.log('Run:', entity.script.src);
-					var func = this.createSandbox(ScriptSystem._code[src], null, {entity: entity, state: this.state});
+					var func = this.createSandbox(
+									ScriptSystem._code[src],
+									null,
+									{
+										entity: entity,
+										state: this.state
+									});
 					func();
 				}
 			};
@@ -44,7 +49,6 @@ define(['sge','./core'], function(sge, core, Entity){
 			for (var i = manifest.scripts.length - 1; i >= 0; i--) {
 				var script = manifest.scripts[i];
 				var url = '/src/dsr/scripts/' + script + '.js';
-				console.log(url);
 				var p = loader.loadCode(url).then(function(code){
 					ScriptSystem._code[this.script] = code;
 				}.bind({script: script}));

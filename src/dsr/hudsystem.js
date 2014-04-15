@@ -9,14 +9,23 @@ define(['sge','./core'], function(sge, core, Entity){
 		},
 		setup: function(){
 			map = this.state.getSystem('map');
-			this.instructions = "Objective: Find the Captain."
-			this.instruct = new PIXI.BitmapText(this.instructions, {font: '32px 8bit', align: 'center'});
+			this.instruct = new PIXI.BitmapText('', {font: '32px 8bit', align: 'center'});
             this.instruct.position.x = 64;
             this.instruct.position.y = game.renderer.height - 64;
-            //this.container.addChild(this.instruct);
+            this.instruct.visible = false;
+            this.container.addChild(this.instruct);
 		},
 		tick: function(delta, entities){
-			
+			if (this.instructions!=this._instructions){
+				this._instructions=this.instructions;
+				if (this.instructions){
+					this.instruct.visible = true;
+					this.instruct.setText(this.instructions);
+				} else {
+					this.instruct.visible = false;
+				}
+				
+			}
 		}
 	})
 	return HudSystem;

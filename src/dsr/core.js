@@ -25,6 +25,9 @@ define([
             setup: function(systems){
             
             },
+            addEntity: function(e){
+                return e;
+            },
             tick: function(){},
             render: function(){},
         })
@@ -35,6 +38,11 @@ define([
 
         var loadAssets = function(loader, manifest){
             var promises = [];
+            if (manifest.fonts){
+                manifest.fonts.forEach(function(url){
+                    promises.push(loader.loadFont(url))
+                })
+            }
             if (manifest.tiles){
                 manifest.tiles.forEach(function(url){
                     promises.push(loader.loadSpriteFrames(url, url.match(/\/(\w*)\.\w*$/)[1], 32, 32))

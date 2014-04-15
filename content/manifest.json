@@ -3,12 +3,14 @@
         "content/tiles/base_tiles.png"   
     ],
     "fonts" : [
+        "content/font/tahoma_white.fnt",
         "content/font/standard_white.fnt"
     ],
     "sprites" : [
         ["content/sprites/orange.png", 64, 64],
         ["content/sprites/door.png", 32, 64],
         ["content/sprites/switch.png", 32, 64],
+        ["content/sprites/shelves.png", 32, 64],
         ["content/lights/flashlight_basic.png", 256,256],
         ["content/lights/point_small.png", 128, 128],
         ["content/lights/point_medium.png", 256, 256],
@@ -20,6 +22,7 @@
     ],
     "scripts" : [
         "door",
-        "switch"
+        "switch",
+        "container"
     ]
 }

@@ -25,7 +25,7 @@ define(['sge','./core'], function(sge, core, Entity){
 			this.shadowTexture = new PIXI.RenderTexture(this.map.width*this.map.tileSize, this.map.height*this.map.tileSize);
 			this.shadowSprite = new PIXI.Sprite(this.shadowTexture);
 			this.shadowSprite.blendMode = PIXI.blendModes.MULTIPLY;
-			this.shadowSprite.mask = map.canopyMask;
+			//this.shadowSprite.mask = map.canopyMask;
 			this.container.addChild(this.fog);
 			this.container.addChild(this.shadowSprite);
 

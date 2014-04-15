@@ -100,7 +100,7 @@ define([
 
 
 			setStateClass: function(name, klass){
-				this.current = name;
+				
 				this._stateClassMap[name] = klass;
 			},
 			getState: function(name){
@@ -116,16 +116,17 @@ define([
 				return state;
 			},
 
-			changeState: function(name){
-				this._nextState = name;
+			changeState: function(name, data){
+				this._nextState = [name, data];
 			},
 
 			_changeState: function(name){
 				if (this._currentState){
 					this._currentState.endState();
 				}
-				this._currentState = this.getState(name);
-				this._currentState.startState();
+				this.current = name[0];
+				this._currentState = this.getState(name[0]);
+				this._currentState.startState(name[1]);
 			},
 
 

@@ -6,7 +6,7 @@
          "name":"base",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":33,
          "x":0,
          "y":0
@@ -50,7 +50,7 @@
          "objects":[],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "width":33,
          "x":0,
          "y":0
@@ -71,7 +71,7 @@
                  "visible":true,
                  "width":0,
                  "x":224,
-                 "y":672
+                 "y":736
                 }, 
                 {
                  "gid":66,
@@ -107,6 +107,7 @@
                  "name":"swith.door",
                  "properties":
                     {
+                     "connection.bind":"\"@(door.switch)\"",
                      "switch.connect":"\"@door.switch\""
                     },
                  "type":"switch",
@@ -126,8 +127,8 @@
                  "type":"shelf",
                  "visible":true,
                  "width":0,
-                 "x":608,
-                 "y":224
+                 "x":480,
+                 "y":544
                 }, 
                 {
                  "gid":69,
@@ -149,7 +150,8 @@
                  "name":"door.switch",
                  "properties":
                     {
-                     "door.locked":"true"
+                     "interact.enabled":"false",
+                     "light.enabled":"false"
                     },
                  "type":"door",
                  "visible":true,
@@ -163,9 +165,9 @@
                  "name":"door.locked",
                  "properties":
                     {
-                     "light.offsety":"0",
-                     "light.tint":"0xFFFFCC",
-                     "light.type":"\"point_medium_half\""
+                     "door.locked":"false",
+                     "door.stuck":"true",
+                     "light.enabled":"false"
                     },
                  "type":"door",
                  "visible":true,
@@ -179,9 +181,7 @@
                  "name":"door.basic",
                  "properties":
                     {
-                     "light.offsety":"0",
-                     "light.tint":"0xFFFFCC",
-                     "light.type":"\"point_medium_half\""
+                     "":""
                     },
                  "type":"door",
                  "visible":true,
@@ -192,10 +192,10 @@
                 {
                  "gid":66,
                  "height":0,
-                 "name":"door.room",
+                 "name":"door.entry",
                  "properties":
                     {
-
+                     "light.tint":"0xCCFFFF"
                     },
                  "type":"door",
                  "visible":true,
@@ -258,10 +258,52 @@
                  "width":0,
                  "x":448,
                  "y":224
+                }, 
+                {
+                 "gid":70,
+                 "height":0,
+                 "name":"switch.lgt_room_basic",
+                 "properties":
+                    {
+                     "connection.bind":"\"@(lgt_room_basic)\""
+                    },
+                 "type":"switch",
+                 "visible":true,
+                 "width":0,
+                 "x":288,
+                 "y":192
+                }, 
+                {
+                 "gid":69,
+                 "height":0,
+                 "name":"cabinet.test",
+                 "properties":
+                    {
+                     "inventory.items":"'bomb','bomb'"
+                    },
+                 "type":"shelf",
+                 "visible":true,
+                 "width":0,
+                 "x":608,
+                 "y":544
+                }, 
+                {
+                 "gid":69,
+                 "height":0,
+                 "name":"cabinet.test",
+                 "properties":
+                    {
+                     "inventory.items":"'bomb','bomb'"
+                    },
+                 "type":"shelf",
+                 "visible":true,
+                 "width":0,
+                 "x":544,
+                 "y":544
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "width":33,
          "x":0,
          "y":0
@@ -272,7 +314,7 @@
          "name":"terrain",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":33,
          "x":0,
          "y":0
@@ -316,9 +358,10 @@
          "objects":[
                 {
                  "height":224,
-                 "name":"switch",
+                 "name":"lgt_exit",
                  "properties":
                     {
+                     "enabled":"false",
                      "tint":"FFFFCC"
                     },
                  "type":"flashlight_basic",
@@ -329,9 +372,10 @@
                 }, 
                 {
                  "height":320,
-                 "name":"switch",
+                 "name":"lgt_mainroom_w",
                  "properties":
                     {
+                     "enabled":"false",
                      "tint":"FFFFCC"
                     },
                  "type":"point_large",
@@ -342,9 +386,10 @@
                 }, 
                 {
                  "height":224,
-                 "name":"switch",
+                 "name":"lgt_exit_s",
                  "properties":
                     {
+                     "enabled":"false",
                      "tint":"FFFFCC"
                     },
                  "type":"flashlight_basic",
@@ -355,9 +400,10 @@
                 }, 
                 {
                  "height":320,
-                 "name":"switch",
+                 "name":"lgt_mainroom_e",
                  "properties":
                     {
+                     "enabled":"false",
                      "tint":"FFFFCC"
                     },
                  "type":"point_large",
@@ -368,10 +414,10 @@
                 }, 
                 {
                  "height":224,
-                 "name":"switch",
+                 "name":"lgt_entry",
                  "properties":
                     {
-                     "tint":"FFFFCC"
+                     "tint":"CCFFFF"
                     },
                  "type":"flashlight_basic",
                  "visible":true,
@@ -381,7 +427,7 @@
                 }, 
                 {
                  "height":224,
-                 "name":"switch",
+                 "name":"lgt_room_locked",
                  "properties":
                     {
                      "tint":"FFFFCC"
@@ -391,6 +437,47 @@
                  "width":224,
                  "x":352,
                  "y":96
+                }, 
+                {
+                 "height":224,
+                 "name":"lgt_room_switched",
+                 "properties":
+                    {
+                     "tint":"FFFFCC"
+                    },
+                 "type":"flashlight_basic",
+                 "visible":true,
+                 "width":224,
+                 "x":544,
+                 "y":96
+                }, 
+                {
+                 "height":224,
+                 "name":"lgt_room_basic",
+                 "properties":
+                    {
+                     "enabled":"false",
+                     "tint":"FFFFCC"
+                    },
+                 "type":"flashlight_basic",
+                 "visible":true,
+                 "width":224,
+                 "x":128,
+                 "y":96
+                }, 
+                {
+                 "height":192,
+                 "name":"lgt_exit",
+                 "properties":
+                    {
+                     "":"",
+                     "tint":"FFFFCC"
+                    },
+                 "type":"flashlight_basic",
+                 "visible":true,
+                 "width":192,
+                 "x":96,
+                 "y":320
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -402,7 +489,7 @@
  "orientation":"orthogonal",
  "properties":
     {
-
+     "mission":"tech_demo"
     },
  "tileheight":32,
  "tilesets":[

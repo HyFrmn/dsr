@@ -56,7 +56,7 @@ define([
                     return;
                 }
                 var callbacks = this._lisenters[eventName];
-                this._lisenters[eventName] = this._lisenters[eventName].filter(function(data){
+                this._lisenters[eventName] = callbacks.filter(function(data){
                     data[0].apply(this, args);
                     if (data[1].once){
                         return false;

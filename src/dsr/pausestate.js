@@ -4,7 +4,6 @@ define([
     ], function(sge, core){
         var PauseState = core.DSRState.extend({
             init: function(game, options){
-                 console.log('test')
                 this._super(game, options);
                 this._dots = 0;
                 this._dotsTimer = 1/3;

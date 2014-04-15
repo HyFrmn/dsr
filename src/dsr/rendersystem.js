@@ -25,8 +25,13 @@ define(['sge','./core'], function(sge, core, Entity){
 							if (entity.highlight.visible){
 								highlight = new PIXI.Graphics();
 								highlight.beginFill(0xFFFFFF);
-								highlight.drawCircle(0,0,32,32);
-								highlight.drawCircle(0,-64,32,32);
+								if (entity.interact.targets){
+									entity.interact.targets.forEach(function(target){
+										highlight.drawCircle(target[0],target[1],entity.highlight.radius,entity.highlight.radius);
+									})
+								} else {
+									highlight.drawCircle(0,0,entity.highlight.radius,entity.highlight.radius);
+								}
 								highlight.endFill();
 								this.floorContainer.addChild(highlight);
 								this._highlights[entity.id] = highlight;
@@ -50,7 +55,6 @@ define(['sge','./core'], function(sge, core, Entity){
 					if (sprite==undefined){
 						sprite = new PIXI.Sprite.fromFrame(entity.sprite.src + '-' + entity.sprite.frame);
 						this.spriteContainer.addChild(sprite);
-						console.log(entity.sprite.src + '-' + entity.sprite.frame);
 						this._sprites[entity.id]=sprite;
 					}
 					sprite.setTexture(PIXI.TextureCache[entity.sprite.src + '-' + entity.sprite.frame])

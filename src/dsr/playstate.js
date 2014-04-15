@@ -9,7 +9,9 @@ define([
 		'./lightsystem',
 		'./interactsystem',
 		'./scriptsystem',
-		'./hudsystem'
+		'./hudsystem',
+		'./connectionsystem',
+		'./inventorysystem'
 	], 
 	function(   sge,
 				core,
@@ -21,7 +23,9 @@ define([
 				LightSystem,
 				InteractSystem,
 				ScriptSystem,
-				HudSystem){
+				HudSystem,
+				ConnectionSystem,
+				InventorySystem){
 	
 	var PlayState = core.DSRState.extend({
 		STAGE_COLOR: 0x000000,
@@ -47,6 +51,8 @@ define([
 			this.addSystem('render', RenderSystem);
 			this.addSystem('light', LightSystem);
 			this.addSystem('hud', HudSystem);
+			this.addSystem('connection', ConnectionSystem);
+			this.addSystem('inventory', InventorySystem);
 			
 			//Chain Startup
 			this.getSystem('map').load('content/levels/tech_demo_a.json').then(this.startGame.bind(this));
@@ -74,10 +80,20 @@ define([
 			if (entity.name){
 				this._entityNames[entity.name] = entity;
 			}
+			var systems = this._systemNames;
+			for (var i = systems.length - 1; i >= 0; i--) {
+				this._systems[systems[i]].addEntity(entity);
+			};
 			return entity;
+		},
+		getEntityByName: function(name){
+			return this._entityNames[name];
 		},
 		removeEntity: function(){
 
+		},
+		startCutscene: function(data){
+			this.game.changeState('cutscene', data);
 		},
 		render: function(delta){
 			var systems = this._systemNames;

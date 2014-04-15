@@ -11,7 +11,6 @@ var update = function(){
 }
 
 entity.on('interact', function(user){
-	console.log('Update Switch')
 	entity.switch.toggle = !entity.switch.toggle;
 	update();
 });

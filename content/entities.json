@@ -13,18 +13,34 @@
 		"pc" : {
 			"inherit" : "chara",
 			"pc" : {},
-			"light"  : { "type" : "point_small", "offsety" : -16, "enabled" : true}
+			"light"  : { "type" : "point_small", "offsety" : -16, "enabled" : false},
+			"inventory" : {}
 		},
 		"door" : {
 			"inherit" : "interact",
+			"interact" : { "targets" : [[0,0],[0,-64]]},
 			"xform" : {},
 			"sprite" : { "src" : "door", "offsety" : -16},
 			"script" : { "src" : "door" },
 			"door" : { "open" : false, "locked" : false },
+			"light" : {"type" : "point_medium_half", "tint" : 16777164, "offsety" : 16, "enabled" : true},
 			"connection" : {
 				"output" : false,
-				"default_input" : "toggle"
+				"default_input" : "interact"
 			}
+		},
+		"shelf" : {
+			"inherit" : "interact",
+			"xform" : {},
+			"sprite" : { "src" : "shelves", "offsety" : -16, "frame": 1},
+			"highlight" : {"radius" : 24},
+			"container" : {
+				"openFrame" : 10,
+				"closeFrame" : 1,
+				"open" : false
+			},
+			"script" : { "src" : "container" },
+			"inventory" : {}
 		},
 		"interact" : {
 			"interact" : {},
@@ -42,6 +58,16 @@
 			"connection" : {
 				"input" : "false",
 				"default_output" : "interact"
+			}
+		},
+		"light" : {
+			"xform" : {},
+			"light" : {},
+			"interact" : {
+				"toggle" : "light.enabled"
+			},
+			"connection" : {
+				"output" : false
 			}
 		}
 	}

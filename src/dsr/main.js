@@ -3,14 +3,16 @@ define([
         './core',
         './loadstate',
         './playstate',
-        './pausestate'
+        './pausestate',
+        './cutscenestate'
     ], 
     function(
             sge,
             core,
             loadstate,
             playstate,
-            pausestate
+            pausestate,
+            cutscenestate
         ){
         var createGame = function(options){
             var loader = new sge.Loader();
@@ -30,6 +32,8 @@ define([
                         console.log(pausestate)
                         game.setStateClass('pause', pausestate.PauseState);
                         game.createState('pause');
+                        game.setStateClass('cutscene', cutscenestate.CutsceneState);
+                        game.createState('cutscene');
                         game.setStateClass('game', playstate.PlayState);
                         game.createState('game');
                         game.start();

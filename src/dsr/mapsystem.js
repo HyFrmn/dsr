@@ -93,23 +93,34 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					var type = light.type;
 					var tx = light.x + light.width/2;
 					var ty = light.y + light.height/2;
-					var data = {type: type, tx: tx, ty: ty};
+					var data = {
+						xform: {
+							tx: tx,
+							ty: ty
+						},
+						light: {
+							type: type
+						}
+					}//{type: type, tx: tx, ty: ty};
 					if (light.properties.tint){
-						data.tint = parseInt(light.properties.tint, 16);
+						data.light.tint = parseInt(light.properties.tint, 16);
 					}
-					this.lights.push(data);
+					if (light.properties.enabled){
+						data.light.enabled = eval(light.properties.enabled)
+					}
+					var entity = new Entity('light', data);
+					entity.name = light.name;
+					this.state.addEntity(entity);
 				}.bind(this))
 			}
 
 			this.preRender();
-			console.log(level_data)
 			if (layerData.entities){
 				layerData.entities.objects.forEach(function(entity_data){
 					
 					if (!Entity._data[entity_data.type]){
 						console.error('Nothing found for Entity:', entity_data.type);
-                
-						return
+                return
 					}
 					var props = {
 						xform: {
@@ -118,7 +129,6 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 						}
 					};
 					var ks = Object.keys(entity_data.properties);
-					console.log(ks)
 					for (var i = ks.length - 1; i >= 0; i--) {
 						var key = ks[i];
 
@@ -126,12 +136,10 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 						if (props[subdata[0]]==undefined){
 							props[subdata[0]]={};
 						}
-						console.log(entity_data.properties[key])
 						props[subdata[0]][subdata[1]] = eval(entity_data.properties[key]);
-						console.log(props);
 					};
 					var entity = new Entity(entity_data.type, props);
-					
+					entity.name = entity_data.name;
 					if (entity_data.type=='pc'){
 						this.state.pc = entity;
 					}
@@ -144,7 +152,15 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 			var defered = new sge.When.defer();
 			this.state.game.loader.loadJSON(url).then(function(data){
 				this.createMap(data);
-				defered.resolve();
+				if (data.properties.mission){
+					this.state.game.loader.loadJS('content/missions/' + data.properties.mission + '.js', this.state, {state: this.state}).then(function(func){
+						func();
+						defered.resolve()
+					});
+				} else {
+					defered.resolve();
+				}
+				
 			}.bind(this));
 			return defered.promise;
 		},
