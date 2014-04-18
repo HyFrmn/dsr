@@ -1,0 +1,17 @@
+{
+	"junk" : {
+		"value" : 1,
+		"desc" : "Scraps, junk, odds and ends.",
+		"label" : "Junk"
+	},
+	"prybar" : {
+		"value" : 5,
+		"desc" : "A favorite of Mr. Freeman.",
+		"label" : "Prybar"
+	},
+	"battery" : {
+		"value" : 5,
+		"desc" : "Durasell Z Cell Batteries.",
+		"label" : "Battery"
+	}
+}

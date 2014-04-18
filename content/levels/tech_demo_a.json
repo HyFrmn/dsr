@@ -65,7 +65,7 @@
                  "name":"pc",
                  "properties":
                     {
-                     "inventory.items":"['flashlight',]"
+                     "":""
                     },
                  "type":"pc",
                  "visible":true,
@@ -122,13 +122,13 @@
                  "name":"cabinet.test",
                  "properties":
                     {
-                     "inventory.items":"'bomb','bomb'"
+                     "":""
                     },
                  "type":"shelf",
                  "visible":true,
                  "width":0,
-                 "x":480,
-                 "y":544
+                 "x":576,
+                 "y":224
                 }, 
                 {
                  "gid":69,
@@ -279,27 +279,13 @@
                  "name":"cabinet.test",
                  "properties":
                     {
-                     "inventory.items":"'bomb','bomb'"
+                     "":""
                     },
                  "type":"shelf",
                  "visible":true,
                  "width":0,
                  "x":608,
-                 "y":544
-                }, 
-                {
-                 "gid":69,
-                 "height":0,
-                 "name":"cabinet.test",
-                 "properties":
-                    {
-                     "inventory.items":"'bomb','bomb'"
-                    },
-                 "type":"shelf",
-                 "visible":true,
-                 "width":0,
-                 "x":544,
-                 "y":544
+                 "y":224
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -481,7 +467,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "width":33,
          "x":0,
          "y":0

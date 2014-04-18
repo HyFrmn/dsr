@@ -20,6 +20,9 @@
     "entities" : [
         ["content/entities.json"]
     ],
+    "items" : [
+        ["content/items.json"]
+    ],
     "scripts" : [
         "door",
         "switch",

@@ -105,13 +105,10 @@ define(['sge','./core'], function(sge, core){
                         comps = deepExtend(comps, inherit_stack.pop());
 
                     }
-                    console.log(comps, comp_data)
                     comps = deepExtend(comps, comp_data);
-                    console.log('Resolved:', comps)
                 } else {
                     comps = deepExtend(deepExtend({}, base_data), comp_data);
                 }
-                //console.log(base, comp_data)
                 if (comps!=undefined){
                     var keys = Object.keys(comps);
                     keys.forEach(function(key){

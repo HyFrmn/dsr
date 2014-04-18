@@ -59,7 +59,6 @@ define(['sge','./core'], function(sge, core, Entity){
 
 			var pct = this.map.getTileAtPos(this.state.pc.xform.tx,this.state.pc.xform.ty);
 			if (pct.data.blocker){
-				console.log('Block')
 				pct = this.map.getTile(pct.x, pct.y-1)
 			}
 			if (!pct.data.blocker){

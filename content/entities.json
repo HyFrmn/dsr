@@ -40,7 +40,13 @@
 				"open" : false
 			},
 			"script" : { "src" : "container" },
-			"inventory" : {}
+			"inventory" : {
+				"items" : {
+					"junk" : 5,
+					"battery" : 3,
+					"prybar" : 1
+				}
+			}
 		},
 		"interact" : {
 			"interact" : {},

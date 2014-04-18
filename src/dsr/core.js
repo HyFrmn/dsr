@@ -58,6 +58,7 @@ define([
                     promises.push(loader.loadJSON(url).then(Entity.load));
                 });
             }
+            
             for (var i = _loadAssetCallbacks.length - 1; i >= 0; i--) {
                 _loadAssetCallbacks[i](loader, manifest, promises);
             };

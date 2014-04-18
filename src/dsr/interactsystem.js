@@ -9,10 +9,17 @@ define(['sge','./core', './entity'], function(sge, core, Entity){
 				this.bar.beginFill(0xFFFFFF);
                 this.bar.drawRect(10,5, 580, 20);
                 this.container = new PIXI.DisplayObjectContainer();
+                this.text = new PIXI.BitmapText('Press [Spacebar] to pry open the door.', {font: '18px tahoma', align: 'right'});
+            	this.text.position.x = 300 - this.text.textWidth/2;
+            	this.text.position.y = 150;
+            	this.container.addChild(this.text);
                 this.container.addChild(this.bg);
                 this.container.addChild(this.bar);
                 this.container.position.x = 165;
                 this.container.position.y = 120;
+
+
+
             },
             startState: function(data){
             	this.gameState = this.game.getState('game');

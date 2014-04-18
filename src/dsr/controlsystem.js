@@ -23,8 +23,8 @@ define(['sge','./core'], function(sge, core, Entity){
 				this.state.pc.movement.vy = speed;
 			}
 
+			//Turn on Light
 			if (this.state.input.isPressed('F')){
-				console.log('Light')
 				this.state.pc.light.enabled = !this.state.pc.light.enabled;
 			}
 		}

@@ -40,7 +40,7 @@ define([
 			this.mapContainer = new PIXI.DisplayObjectContainer();
 			this.hudContainer = new PIXI.DisplayObjectContainer();
 			this.stage.addChild(this.mapContainer);
-			this.stage.addChild(this.hudContainer);
+			
 			console.log('Added Containers!!')
 			//Initialize System
 			this.addSystem('control', ControlSystem);
@@ -85,6 +85,12 @@ define([
 				this._systems[systems[i]].addEntity(entity);
 			};
 			return entity;
+		},
+		startState: function(){
+			this.stage.addChild(this.hudContainer);
+		},
+		endState: function(){
+			this.stage.removeChild(this.hudContainer);
 		},
 		getEntityByName: function(name){
 			return this._entityNames[name];
