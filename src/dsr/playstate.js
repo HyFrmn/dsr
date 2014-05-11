@@ -11,7 +11,9 @@ define([
 		'./scriptsystem',
 		'./hudsystem',
 		'./connectionsystem',
-		'./inventorysystem'
+		'./inventorysystem',
+		'./animationsystem',
+		'./electricalsystem'
 	], 
 	function(   sge,
 				core,
@@ -25,7 +27,9 @@ define([
 				ScriptSystem,
 				HudSystem,
 				ConnectionSystem,
-				InventorySystem){
+				InventorySystem,
+				AnimationSystem,
+				ElectricalSystem){
 	
 	var PlayState = core.DSRState.extend({
 		STAGE_COLOR: 0x000000,
@@ -34,6 +38,7 @@ define([
 			this._eid = 1;
 			this._entities = {};
 			this._entityNames = {};
+			this._tagged = {}
 			this._systems = {};
 			this._systemNames = [];
 			//Intialize Game Play Graphics
@@ -53,9 +58,12 @@ define([
 			this.addSystem('hud', HudSystem);
 			this.addSystem('connection', ConnectionSystem);
 			this.addSystem('inventory', InventorySystem);
+			this.addSystem('animation', AnimationSystem);
+			this.addSystem('electrical', ElectricalSystem)
 			
 			//Chain Startup
-			this.getSystem('map').load('content/levels/tech_demo_a.json').then(this.startGame.bind(this));
+			console.log('Load Map:', options);
+			this.getSystem('map').load('content/levels/' + options.map +'.json').then(this.startGame.bind(this));
 
 		},
 		startGame: function(){
@@ -84,7 +92,19 @@ define([
 			for (var i = systems.length - 1; i >= 0; i--) {
 				this._systems[systems[i]].addEntity(entity);
 			};
+			if (entity.tags){
+				for (var q = entity.tags.length - 1; q >= 0; q--) {
+					var tag = entity.tags[q];
+					if (this._tagged[tag]==undefined){
+						this._tagged[tag] = [];
+					}
+					this._tagged[tag].push(entity);
+				};
+			}
 			return entity;
+		},
+		findEntities: function(){
+			return Object.keys(this._entities).map(function(k){return this._entities[k]}.bind(this))
 		},
 		startState: function(){
 			this.stage.addChild(this.hudContainer);
@@ -94,6 +114,9 @@ define([
 		},
 		getEntityByName: function(name){
 			return this._entityNames[name];
+		},
+		getTagged: function(tag){
+			return this._tagged[tag]
 		},
 		removeEntity: function(){
 

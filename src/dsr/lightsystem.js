@@ -17,7 +17,7 @@ define(['sge','./core'], function(sge, core, Entity){
 			this.map = this.state.getSystem('map');
 
 			this.shadow = new PIXI.Graphics();
-			this.shadow.beginFill(0x111111);
+			this.shadow.beginFill(0);
 			this.shadow.drawRect(0,0, this.map.width*this.map.tileSize, this.map.height*this.map.tileSize);
 			this.shadow.endFill();
 
@@ -57,10 +57,13 @@ define(['sge','./core'], function(sge, core, Entity){
 				t.data.visible=false;
 			});
 
+			//Get Tile Player is On.
 			var pct = this.map.getTileAtPos(this.state.pc.xform.tx,this.state.pc.xform.ty);
 			if (pct.data.blocker){
 				pct = this.map.getTile(pct.x, pct.y-1)
 			}
+
+			//Determin if current tile can block vis, and fill with visibility from current pos.
 			if (!pct.data.blocker){
 				this._foo = false;
 				this.lightFillScanline(
@@ -69,13 +72,18 @@ define(['sge','./core'], function(sge, core, Entity){
 					this.map.width,
 					this.map.height-1,
 					false,
+					//TEST
 					function(x, y){
 						var t= this.map.getTile(x,y);
-							
 						if (t){
 							if ((((t.x-pct.x)*(t.x-pct.x)+(t.y-pct.y)*(t.y-pct.y)))<64){
 								if (t.data.fow){
 									t.data.fow = false;
+								}
+							}
+							if (t.data.doorHack){
+								if (t.y>pct.y){
+									t.data.visible=true;
 								}
 							}
 							return !t.data.blocker;
@@ -84,6 +92,7 @@ define(['sge','./core'], function(sge, core, Entity){
 							console.log('Light Fill Error:', x, y)
 						}
 					}.bind(this),
+					//FILL
 					function(x, y){
 						var t= this.map.getTile(x,y);
 						if (t){
@@ -95,7 +104,8 @@ define(['sge','./core'], function(sge, core, Entity){
 				);
 			}
 
-			//*
+			//Update Fog of War.
+			/*
 			this.map.getTile(pct.x,pct.y).data.fow = false;
 			var rad = 4;
 			for (var dx = -rad; dx < rad+1; dx++) {
@@ -112,6 +122,7 @@ define(['sge','./core'], function(sge, core, Entity){
 				}
 			}
 			//*/
+			//*
 			this.fog.clear();
 			this.fog.beginFill(0x000000);
 			this.map.getTiles().forEach(function(t){
@@ -120,6 +131,7 @@ define(['sge','./core'], function(sge, core, Entity){
 				}
 			}.bind(this));
 			this.fog.endFill();
+			//*/
 			/*
 			this.fog.beginFill(0xFF0000);
 			this.map.getTiles().forEach(function(t){
@@ -137,14 +149,23 @@ define(['sge','./core'], function(sge, core, Entity){
 						this.addLight(entity);
 					}
 					var sprite = this._lights[entity.id];
+					if (entity.light.strobe>0){
+						if (entity.light._life==undefined){
+							entity.light._life = 0;
+						}
+						entity.light._life += delta;
+						entity.light.intensity = Math.abs(Math.sin(entity.light._life*entity.light.strobe));
+						
+					}
+
+
 					sprite.position.x = entity.xform.tx   - sprite.width/2 + entity.light.offsetx;
 					sprite.position.y = entity.xform.ty   - sprite.height/2 + entity.light.offsety;
-					if (entity.light.tint){
-						sprite.tint = entity.light.tint;
-					}
-					if (entity.light.enabled!==undefined){
-						sprite.visible = entity.light.enabled;
-					}
+					sprite.tint = entity.light.tint;
+					sprite.alpha = entity.light.intensity;
+					var tile = this.map.getTileAtPos(entity.xform.tx, entity.xform.ty);
+					sprite.visible = entity.light.enabled && tile.data.visible;
+					
 				}
 			};
 		},

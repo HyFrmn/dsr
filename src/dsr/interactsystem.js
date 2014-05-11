@@ -71,7 +71,6 @@ define(['sge','./core', './entity'], function(sge, core, Entity){
 		addEntity: function(e){
 			if (e.interact){
 				if (e.interact.toggle){
-					console.log(e.interact.toggle.split('.'))
 					var comp = e.interact.toggle.split('.')[0];
 					var attr = e.interact.toggle.split('.')[1];
 					e.on('interact', function(){
@@ -128,7 +127,15 @@ define(['sge','./core', './entity'], function(sge, core, Entity){
 						this._interactEntity.highlight.color = 0xFF0000;
 						this._interactEntity.trigger('interact', this.state.pc);
 					}
-				} else {
+				} 
+				if (this.state.input.isDown('A')){
+					if (!this._isInteracting){
+						this._isInteracting = true;	
+						this._interactEntity.highlight.color = 0xFFFF00;
+						this._interactEntity.trigger('interact.action', this.state.pc);
+					}
+				}
+				if (!this.state.input.isDown('A') && !this.state.input.isDown('space')) {
 					this._isInteracting = false;
 					this._interactEntity.highlight.color = 0x0068E6;
 				}

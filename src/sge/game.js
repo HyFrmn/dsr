@@ -107,11 +107,11 @@ define([
 				return this._states[name];
 			},
 
-			createState: function(name){
+			createState: function(name, options){
 				if (this._stateClassMap[name]===undefined){
 					console.error('No state defined for ' + name);
 				}
-				var state = new this._stateClassMap[name](this);
+				var state = new this._stateClassMap[name](this, options);
 				this._states[name] = state;
 				return state;
 			},

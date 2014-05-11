@@ -7,20 +7,33 @@ define(['sge','./core'], function(sge, core, Entity){
 			var speed = 1;
 
 			this.state.pc.movement.vx = this.state.pc.movement.vy =0
+			
 			if (this.state.input.isDown('left')){
 				this.state.pc.movement.vx = -speed;
+				this.state.pc.animation.track = "walk_west";
 			}
 
 			if (this.state.input.isDown('right')){
 				this.state.pc.movement.vx = speed;
+				this.state.pc.animation.track = "walk_east";
 			}
 
 			if (this.state.input.isDown('up')){
 				this.state.pc.movement.vy = -speed;
+				this.state.pc.animation.track = "walk_north";
 			}
 
 			if (this.state.input.isDown('down')){
 				this.state.pc.movement.vy = speed;
+				this.state.pc.animation.track = "walk_south";
+			}
+
+			if (this.state.pc.movement.vx !=0 || this.state.pc.movement.vy != 0){
+				this.state.pc.animation.play = true;
+				
+			} else {
+				this.state.pc.animation.play = false;
+				this.state.pc.animation.frame = 0;
 			}
 
 			//Turn on Light

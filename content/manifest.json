@@ -1,6 +1,6 @@
 {
     "tiles" : [
-        "content/tiles/base_tiles.png"   
+        "content/tiles/dsr_tiles.png"   
     ],
     "fonts" : [
         "content/font/tahoma_white.fnt",
@@ -8,8 +8,9 @@
     ],
     "sprites" : [
         ["content/sprites/orange.png", 64, 64],
-        ["content/sprites/door.png", 32, 64],
+        ["content/sprites/door.png", 32, 96],
         ["content/sprites/switch.png", 32, 64],
+        ["content/sprites/gsc.png", 32, 64],
         ["content/sprites/shelves.png", 32, 64],
         ["content/lights/flashlight_basic.png", 256,256],
         ["content/lights/point_small.png", 128, 128],

@@ -12,7 +12,8 @@ define([
 
 		var options = {
             width: 960,
-            height: 540
+            height: 540,
+            map: getURLParameter('map') || 'tech_demo'
         }
 
 		dsr.createGame(options);

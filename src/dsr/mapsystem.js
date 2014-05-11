@@ -14,7 +14,7 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 			this.y = y;
 			this.data = {
 				visible: true,
-				fow:    true,
+				fow:    false,
 				passable: true,
 				blocker: false
 			},
@@ -57,17 +57,27 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 				var tile = new Tile(x, y);
 				tile.layers.base = -1;
 				this.tiles.push(tile);
-				
-				tile.layers.base = layerData.base.data[this.getIndex(x,y)]-1;
-				var idx = layerData.layer0.data[this.getIndex(x,y)]-1;
+				var mapIdx = this.getIndex(x,y);
+				tile.layers.base = layerData.base.data[mapIdx]-1;
+				var idx = layerData.layer0.data[mapIdx]-1;
 				if (idx>=0){
 					tile.layers.layer0 = idx;
 				} else {
 					layerMask.drawRect(tile.x * this.tileSize, tile.y * this.tileSize, this.tileSize, this.tileSize);
 				}
-				tile.data.passable = layerData.terrain.data[this.getIndex(x,y)]==0;
-				tile.data.blocker = layerData.shadow.data[this.getIndex(x,y)]==0;
-				tile.data.canopy = layerData.canopy.data[this.getIndex(x,y)]!=0;
+				idx = layerData.layer1.data[mapIdx]-1;
+				if (idx>=0){
+					tile.layers.layer1 = idx;
+				}
+
+
+				var cidx = layerData.canopy.data[mapIdx]-1;
+				if (cidx>=0){
+					tile.layers.canopy = cidx;
+				}
+				tile.data.passable = layerData.terrain.data[mapIdx]==0;
+				tile.data.blocker = layerData.canopy.data[mapIdx]!=0;
+				tile.data.canopy = layerData.canopy.data[mapIdx]!=0;
 				if (tile.x==0||tile.y==0||tile.x==this.width-1||tile.y==this.height-1){
 					tile.data.passable = false;
 					//tile.data.blocker = true;
@@ -105,11 +115,15 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					if (light.properties.tint){
 						data.light.tint = parseInt(light.properties.tint, 16);
 					}
+					if (light.properties.strobe){
+						data.light.strobe = parseInt(light.properties.strobe, 10);
+					}
 					if (light.properties.enabled){
 						data.light.enabled = eval(light.properties.enabled)
 					}
 					var entity = new Entity('light', data);
 					entity.name = light.name;
+					entity.tags = [light.name];
 					this.state.addEntity(entity);
 				}.bind(this))
 			}
@@ -253,13 +267,25 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					var tile = this.getTile(x, y);
 					if (tile){
 						if (tile.layers.base>=0){
-							var sprite = new PIXI.Sprite.fromFrame('base_tiles-' + tile.layers.base);
+							var sprite = new PIXI.Sprite.fromFrame('dsr_tiles-' + tile.layers.base);
 							sprite.position.x = (x*this.tileSize) - startX;
 							sprite.position.y = (y*this.tileSize) - startY;
 							chunk.addChild(sprite);
 						}
 						if (tile.layers.layer0!==undefined){
-							var sprite = new PIXI.Sprite.fromFrame('base_tiles-' + tile.layers.layer0);
+							var sprite = new PIXI.Sprite.fromFrame('dsr_tiles-' + tile.layers.layer0);
+							sprite.position.x = (x*this.tileSize) - startX;
+							sprite.position.y = (y*this.tileSize) - startY;
+							chunk.addChild(sprite);
+						}
+						if (tile.layers.layer1!==undefined){
+							var sprite = new PIXI.Sprite.fromFrame('dsr_tiles-' + tile.layers.layer1);
+							sprite.position.x = (x*this.tileSize) - startX;
+							sprite.position.y = (y*this.tileSize) - startY;
+							chunk.addChild(sprite);
+						}
+						if (tile.layers.canopy!==undefined){
+							var sprite = new PIXI.Sprite.fromFrame('dsr_tiles-' + tile.layers.canopy);
 							sprite.position.x = (x*this.tileSize) - startX;
 							sprite.position.y = (y*this.tileSize) - startY;
 							chunk.addChild(sprite);

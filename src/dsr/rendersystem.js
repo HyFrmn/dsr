@@ -17,6 +17,7 @@ define(['sge','./core'], function(sge, core, Entity){
 			this.spriteContainer.mask = map.canopyMask;
 		},
 		tick: function(delta, entities){
+			var spriteList = [];
 			for (var i = entities.length - 1; i >= 0; i--) {
 				var entity = entities[i];
 				if (entity.highlight){
@@ -61,7 +62,17 @@ define(['sge','./core'], function(sge, core, Entity){
 					sprite.visible = entity.sprite.visible;
 					sprite.position.x = entity.xform.tx + entity.sprite.offsetx - sprite.width/2;
 					sprite.position.y = entity.xform.ty + entity.sprite.offsety - sprite.height/2;
+					sprite.rotation = entity.xform.a || 0;
+					spriteList.push(sprite);
+					this.spriteContainer.removeChild(sprite);
 				}
+				//SORT SPRITES... UGH
+				spriteList = spriteList.sort(function(a,b){ 
+					return a.position.y - b.position.y;
+				})
+				spriteList.forEach(function(sprite){
+					this.spriteContainer.addChild(sprite);
+				}.bind(this));
 			};
 		}
 	})

@@ -35,7 +35,7 @@ define([
                         game.setStateClass('cutscene', cutscenestate.CutsceneState);
                         game.createState('cutscene');
                         game.setStateClass('game', playstate.PlayState);
-                        game.createState('game');
+                        game.createState('game', options);
                         game.start();
                     })
                 });

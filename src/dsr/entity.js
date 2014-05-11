@@ -18,7 +18,8 @@ define(['sge','./core'], function(sge, core){
             'vx' : 0,
             'vy' : 0,
             'width' : 12,
-            'height' : 12
+            'height' : 12,
+            'type' : 0
         },
         'movement' : {
             'vx' : 0,
@@ -38,11 +39,18 @@ define(['sge','./core'], function(sge, core){
         'script' : {
             'src' : null
         },
+        'animation' : {
+            frame: 0,
+            timeout: 0
+        },
         'light' : {
             type: 'point_small',
             tint: 0xFFFFFF,
             offsetx: 0,
-            offsety: 0
+            offsety: 0,
+            intensity: 1,
+            strobe: 0,
+            enabled: true
         },
         'interact' : {
             enabled : true,
@@ -55,6 +63,10 @@ define(['sge','./core'], function(sge, core){
         'inventory' : {
             items: {},
             resources: {},
+        },
+        'electrical' : {
+            active: false,
+            connections: null
         }
     }
 
