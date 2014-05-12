@@ -1,4 +1,3 @@
-console.log(state);
 var hud = state.getSystem('hud');
 var $ = state.getEntityByName.bind(state);
 

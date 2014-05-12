@@ -38,6 +38,7 @@
 				"output" : false,
 				"default_input" : "interact"
 			},
+			"physics" : { "width" : 32, "height" : 48, "mass" : -1, "offsety": -24 },
 			"electrical" : {}
 		},
 		"shelf" : {
@@ -66,10 +67,13 @@
 			}
 		},
 		"gsc" : {
+			"inherit" : "interact",
 			"xform" : {},
+			"interact" : {"radius": 32},
+			"highlight" : {"radius" : 24},
+			"script" : { "src" : "gsc" },
 			"sprite" : { "src" : "gsc", "offsety" : -16},
-			"physics" : { "width" : 30, "height" : 30 },
-			"movement" : {}
+			"physics" : { "width" : 30, "height" : 30, "mass" : -1 }
 		},
 		"switch" : {
 			"inherit" : "interact",

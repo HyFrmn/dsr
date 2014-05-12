@@ -1,5 +1,6 @@
 var map = state.getSystem('map');
 var updateDoor = function(){
+		/*
 		if (!entity.door.open){
 			var tile = map.getTileAtPos(entity.xform.tx, entity.xform.ty);
 			tile.data.passable = false;
@@ -16,6 +17,8 @@ var updateDoor = function(){
 			tile = map.getTile(tile.x, tile.y-1);
 			tile.data.blocker = false;
 		}
+		*/
+		entity.physics.active = !entity.door.open;
 		entity.sprite.visible = !entity.door.open;
 }
 

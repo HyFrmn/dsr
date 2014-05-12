@@ -92,7 +92,7 @@ define(['sge','./core', './entity'], function(sge, core, Entity){
 						var dy = entity.xform.ty - this.state.pc.xform.ty;
 						var dist = ((dx*dx)+(dy*dy));
 						//console.log(dist);
-						if (dist<(128*128)){
+						if (dist<(entity.interact.radius*entity.interact.radius)){
 							if (dist<tmp_dist){
 								tmp_dist = dist;
 								tmp_entity = entity;

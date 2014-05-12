@@ -29,7 +29,6 @@ define([
                         game.setStateClass('load', loadstate.LoadState);
                         game.changeState('load');
                         game.createState('load');
-                        console.log(pausestate)
                         game.setStateClass('pause', pausestate.PauseState);
                         game.createState('pause');
                         game.setStateClass('cutscene', cutscenestate.CutsceneState);

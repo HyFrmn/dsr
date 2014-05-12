@@ -19,7 +19,11 @@ define(['sge','./core'], function(sge, core){
             'vy' : 0,
             'width' : 12,
             'height' : 12,
-            'type' : 0
+            'type' : 0,
+            'mass' : 1,
+            'active' : true,
+            'offsetx' : 0,
+            'offsety' : 0
         },
         'movement' : {
             'vx' : 0,
@@ -28,7 +32,8 @@ define(['sge','./core'], function(sge, core){
         },
         'highlight' : {
             'visible' : false,
-            'color' : 0x0068E6
+            'color' : 0x0068E6,
+            'radius' : 32
         },
         'door' : {
             open: false
@@ -55,6 +60,7 @@ define(['sge','./core'], function(sge, core){
         'interact' : {
             enabled : true,
             targets : [[0,0]],
+            radius: 128
         },
         'highlight' : {
             radius : 32,

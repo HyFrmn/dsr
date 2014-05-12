@@ -161,6 +161,74 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					this.state.addEntity(entity)
 				}.bind(this))
 			}
+
+			var outline = new PIXI.Graphics();
+			//this.container.addChild(outline);
+			outline.lineStyle(2, 0xFF0000);
+			//Trace Map
+			
+			//Find Start Pixel
+			var start = null;
+			var x = 1;
+			var y = 1;
+			while (!start){
+				if (this.getTile(x, y).data.passable){
+					start = [x-1,y-1];
+				}
+				x+=1
+				if (x>=this.width){
+					x=0;
+					y+=1;
+					if (y>=this.height){
+						break;
+					}
+				}
+			}
+			
+			//Trace
+			var tracing = true;
+			var pos = start;
+			var vertexs = [];
+			while (tracing){
+				var kernal = [[this.getTile(pos[0], pos[1]).data.passable ? 1 : 0,
+								this.getTile(pos[0]+1, pos[1]).data.passable ? 1 : 0],[
+								this.getTile(pos[0], pos[1]+1).data.passable ? 1 : 0,
+								this.getTile(pos[0]+1, pos[1]+1).data.passable ? 1 : 0]]
+				var composite = kernal[0][0] + kernal[0][1]*2 + kernal[1][0]*4 + kernal[1][1]*8;
+				if (composite==8||composite==12||composite==13){
+					vertexs.push([(pos[0]+1)*32,(pos[1]+1)*32])
+					pos = [pos[0]+1,pos[1]]
+				} else if(composite==4||composite==5||composite==7){
+				 	vertexs.push([(pos[0]+1)*32,(pos[1]+1)*32])
+					pos = [pos[0],pos[1]+1]
+				} else if (composite==1||composite==3||composite==11){ 
+					vertexs.push([(pos[0]+1)*32,(pos[1]+1)*32])
+					pos = [pos[0]-1,pos[1]]
+				} else if (composite==2 || composite==10 || composite==14){ 
+					vertexs.push([(pos[0]+1)*32,(pos[1]+1)*32])
+					pos = [pos[0],pos[1]-1]
+				}
+				if (pos[0]==start[0]&&pos[1]==start[1]){
+					break;
+				}
+			}
+			this.terrainOutline = [];
+			this.terrainOutline.push(vertexs[0]);
+			var last = vertexs[0];
+			var outlineScale=0.1;
+			outline.moveTo(last[0]*outlineScale,last[1]*outlineScale);
+			for (var i = 1; i < vertexs.length-1; i++) {
+				var vert = vertexs[i];
+				var next = vertexs[i+1];
+				outline.lineTo(vert[0]*outlineScale,vert[1]*outlineScale);
+				if (!(next[0]==last[0]||next[1]==last[1])){
+					this.terrainOutline.push(vert);
+				}
+				last = vert;
+			}
+			outline.lineTo(vertexs[0][0]*outlineScale,vertexs[0][1]*outlineScale);
+			console.log('Vertexs:', vertexs.length, this.terrainOutline.length);
+			//this.outline = outline;
 		},
 		load: function(url){
 			var defered = new sge.When.defer();
