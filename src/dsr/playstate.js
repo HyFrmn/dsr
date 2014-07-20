@@ -1,3 +1,4 @@
+DEBUG=0;
 define([
 		'sge',
 		'./core', 
@@ -13,7 +14,9 @@ define([
 		'./connectionsystem',
 		'./inventorysystem',
 		'./animationsystem',
-		'./electricalsystem'
+		'./electricalsystem',
+		'./particlesystem',
+		'./survivalsystem'
 	], 
 	function(   sge,
 				core,
@@ -29,7 +32,9 @@ define([
 				ConnectionSystem,
 				InventorySystem,
 				AnimationSystem,
-				ElectricalSystem){
+				ElectricalSystem,
+				ParticleSystem,
+				SurvivalSystem){
 	
 	var PlayState = core.DSRState.extend({
 		STAGE_COLOR: 0x000000,
@@ -54,12 +59,15 @@ define([
 			this.addSystem('script', ScriptSystem);			
 			this.addSystem('physics', PhysicsSystem);
 			this.addSystem('render', RenderSystem);
+			this.addSystem('particle', ParticleSystem);
 			this.addSystem('light', LightSystem);
 			this.addSystem('hud', HudSystem);
 			this.addSystem('connection', ConnectionSystem);
 			this.addSystem('inventory', InventorySystem);
 			this.addSystem('animation', AnimationSystem);
-			this.addSystem('electrical', ElectricalSystem)
+			this.addSystem('electrical', ElectricalSystem);
+			this.addSystem('survival', SurvivalSystem);
+			
 			
 			//Chain Startup
 			console.log('Load Map:', options);
@@ -69,6 +77,7 @@ define([
 		startGame: function(){
 			var systems = this._systemNames;
 			for (var i = systems.length - 1; i >= 0; i--) {
+				console.log(systems[i])
 				this._systems[systems[i]].setup();
 			};
             console.log('Start Game!');
@@ -112,8 +121,23 @@ define([
 		endState: function(){
 			this.stage.removeChild(this.hudContainer);
 		},
+		getEntity: function(name){
+			return this._entities[name];
+		},
 		getEntityByName: function(name){
 			return this._entityNames[name];
+		},
+		getEntitiesByAABB: function(x, y, width, height){
+			var results = [];
+			var physics = this.getSystem('physics');
+			physics.space.bbQuery(new cp.BB(x-width/2,y-height/2,x+width/2,y+height/2),
+									physics.ENTITY_LAYER,
+									null,
+									function(shape){
+										results.push(shape.entity)
+									})
+		
+			return results;
 		},
 		getTagged: function(tag){
 			return this._tagged[tag]
@@ -138,6 +162,7 @@ define([
 			return entities;
 		},
 		tick: function(delta){
+			this._super(delta);
 			var entities = Object.keys(this._entities).map(function(key){
 			    return this._entities[key];
 			}.bind(this));

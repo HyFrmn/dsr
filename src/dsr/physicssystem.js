@@ -1,6 +1,9 @@
 define(['sge','./core', 'sat'], function(sge, core, sat){
 	var PhysicsSystem = core.DSRSystem.extend({
 		init: function(state){
+			this.ENTITY_LAYER = 2;
+			this.STATIC_LAYER = 4;
+
 			this.state = state
 			this.entities = [];
 			this.map = null;
@@ -9,7 +12,7 @@ define(['sge','./core', 'sat'], function(sge, core, sat){
 		tick: function(delta, entities){
 			this.entities.forEach(function(e){
 				if (e.movement){
-					var speed = 32;
+					var speed = e.movement.speed;
 					e.movement.body.setPos(cp.v(e.xform.tx+(speed*e.movement.vx),e.xform.ty+(speed*e.movement.vy)))
 				}
 				if (e.physics.active){
@@ -35,17 +38,18 @@ define(['sge','./core', 'sat'], function(sge, core, sat){
 		},
 		setup: function(){
 			this.map = this.state.getSystem('map');
-			var simplifed = this.map.terrainOutline;
+			var simplifed = this.map.traceContour('passable');
 			for (var i = 0; i < simplifed.length-1; i++){
 				var shape = new cp.SegmentShape(this.space.staticBody,
 													cp.v(simplifed[i][0],simplifed[i][1]),
 													cp.v(simplifed[i+1][0], simplifed[i+1][1]), 1);
-
+				shape.layers = this.STATIC_LAYER;
 				var segment = this.space.addShape(shape)
 			}
 			var shape = new cp.SegmentShape(this.space.staticBody,
 													cp.v(simplifed[simplifed.length-1][0],simplifed[simplifed.length-1][1]),
 													cp.v(simplifed[0][0], simplifed[0][1]), 1);
+			shape.layers = this.STATIC_LAYER;
 			var segment = this.space.addShape(shape);
 		},
 		addEntity: function(entity){
@@ -66,10 +70,11 @@ define(['sge','./core', 'sat'], function(sge, core, sat){
 					shape.body.setPos(cp.v(entity.xform.tx+entity.physics.offsetx, entity.xform.ty+entity.physics.offsety));
 					this.space.reindexShape(shape);
 				}
-				
+				shape.entity = entity
+				shape.layers = this.ENTITY_LAYER + this.STATIC_LAYER;
 				entity.physics.shape = shape;
 
-				if (entity.movement) {
+				if (entity.movement && mass>0) {
 					targetBody = new cp.Body(Infinity,Infinity);
 					targetBody.setPos(cp.v(entity.xform.tx, entity.xform.ty))
 					

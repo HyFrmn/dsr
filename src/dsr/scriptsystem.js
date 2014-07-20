@@ -9,6 +9,7 @@ define(['sge','./core'], function(sge, core, Entity){
 				var entity = entities[i];
 				if (entity.script!==undefined){
 					var src = entity.script.src;
+					console.log(src)
 					var func = this.createSandbox(
 									ScriptSystem._code[src],
 									null,
@@ -16,12 +17,19 @@ define(['sge','./core'], function(sge, core, Entity){
 										entity: entity,
 										state: this.state
 									});
+					
 					func();
 				}
 			};
 		},
 		tick: function(delta, entities){
-			
+			for (var i = entities.length - 1; i >= 0; i--) {
+				if (entities[i].script){
+					if (entities[i].script.tick!=undefined){
+						entities[i].script.tick(delta);
+					}
+				}
+			};
 		},
 		createSandbox: function(code, that, locals) {
             that = that || Object.create(null);

@@ -1,12 +1,10 @@
 var lightSystem = state.getSystem('light');
-
+var electrical = state.getSystem('electrical');
 var update = function(){
 	if (entity.switch.toggle){
-		entity.sprite.frame = 1;
-		entity.light.tint = 0x66FF66;
+		electrical.turnOn(entity)
 	} else {
-		entity.sprite.frame = 0;
-		entity.light.tint = 0xFF6666;
+		electrical.turnOff(entity)
 	}
 }
 

@@ -4,7 +4,8 @@ define([
         './loadstate',
         './playstate',
         './pausestate',
-        './cutscenestate'
+        './cutscenestate',
+        './gameoverstate'
     ], 
     function(
             sge,
@@ -12,7 +13,8 @@ define([
             loadstate,
             playstate,
             pausestate,
-            cutscenestate
+            cutscenestate,
+            gameoverstate
         ){
         var createGame = function(options){
             var loader = new sge.Loader();
@@ -20,8 +22,9 @@ define([
             promises.push(loader.loadFont('content/font/standard_white.fnt'));
             sge.When.all(promises).then(function(){
                 game = new sge.Game(options);
-                window.onresize = function(size){document.getElementsByTagName('canvas')[0].style.width = window.innerWidth  + "px"};
-                document.getElementsByTagName('canvas')[0].style.width = window.innerWidth  + "px"; 
+                resizeCallback = function(size){document.getElementsByTagName('canvas')[0].style.width = Math.min(window.innerWidth-20,1280) + "px"};
+                window.onresize = resizeCallback();
+                resizeCallback();
                 game.loader = loader;
                 loader.loadJSON('content/manifest.json').then(function(manifest){
                     core.loadAssets(loader, manifest).then(function(){
@@ -31,6 +34,8 @@ define([
                         game.createState('load');
                         game.setStateClass('pause', pausestate.PauseState);
                         game.createState('pause');
+                        game.setStateClass('gameover', gameoverstate.GameOverState);
+                        game.createState('gameover');
                         game.setStateClass('cutscene', cutscenestate.CutsceneState);
                         game.createState('cutscene');
                         game.setStateClass('game', playstate.PlayState);

@@ -17,9 +17,6 @@ define(['sge','./core', './entity'], function(sge, core, Entity){
                 this.container.addChild(this.bar);
                 this.container.position.x = 165;
                 this.container.position.y = 120;
-
-
-
             },
             startState: function(data){
             	this.gameState = this.game.getState('game');
@@ -61,6 +58,7 @@ define(['sge','./core', './entity'], function(sge, core, Entity){
 			this.state = state;
 			this._interactEntity = null;
 			this._isInteracting = false;
+			this._isActioning = false;
 			var game = state.game;
 			game.setStateClass('pry', PryOpenState);
 			game.createState('pry');
@@ -127,17 +125,25 @@ define(['sge','./core', './entity'], function(sge, core, Entity){
 						this._interactEntity.highlight.color = 0xFF0000;
 						this._interactEntity.trigger('interact', this.state.pc);
 					}
-				} 
-				if (this.state.input.isDown('A')){
-					if (!this._isInteracting){
-						this._isInteracting = true;	
-						this._interactEntity.highlight.color = 0xFFFF00;
-						this._interactEntity.trigger('interact.action', this.state.pc);
+				} else {
+					if (this._isInteracting){
+						this._isInteracting = false;
+						this._interactEntity.highlight.color = 0x0068E6;
 					}
 				}
-				if (!this.state.input.isDown('A') && !this.state.input.isDown('space')) {
-					this._isInteracting = false;
-					this._interactEntity.highlight.color = 0x0068E6;
+				if (this.state.input.isDown('A')){
+					if (!this._isActioning){
+						this._isActioning = true;	
+						this._interactEntity.highlight.color = 0xFFFF00;
+						this._interactEntity.trigger('interact.action', this.state.pc);
+						this._interactEntity.trigger('interact.action:start', this.state.pc);
+					}
+				} else {
+					if (this._isActioning){
+						this._isActioning = false;
+						this._interactEntity.highlight.color = 0x0068E6;
+						this._interactEntity.trigger('interact.action:end', this.state.pc);
+					}
 				}
 			}
 		}

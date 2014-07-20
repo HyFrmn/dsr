@@ -12,7 +12,8 @@ define(['sge','./core'], function(sge, core){
             'scaley'  : 1,
             'frame'   : 0,
             'src'  : null,
-            'visible' : true
+            'visible' : true,
+            'tint' : 0xFFFFFF
         },
         'physics' : {
             'vx' : 0,
@@ -28,7 +29,7 @@ define(['sge','./core'], function(sge, core){
         'movement' : {
             'vx' : 0,
             'vy' : 0,
-            'speed' : 128
+            'speed' : 16
         },
         'highlight' : {
             'visible' : false,
@@ -55,7 +56,9 @@ define(['sge','./core'], function(sge, core){
             offsety: 0,
             intensity: 1,
             strobe: 0,
-            enabled: true
+            enabled: true,
+            n_amp: 0.5,
+            n_freq: 0.0,
         },
         'interact' : {
             enabled : true,
@@ -73,6 +76,12 @@ define(['sge','./core'], function(sge, core){
         'electrical' : {
             active: false,
             connections: null
+        },
+        'particles' : {
+            emit_amount: 20,
+            emit_type: 'dir',
+            emit_dir: [0,1],
+            emit_dir_var: [0.4,0.1]
         }
     }
 

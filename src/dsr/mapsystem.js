@@ -14,7 +14,7 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 			this.y = y;
 			this.data = {
 				visible: true,
-				fow:    false,
+				fow:    true,
 				passable: true,
 				blocker: false
 			},
@@ -38,7 +38,7 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 
 		},
 		createMap: function(level_data){
-
+			console.log("FOO")
 			var layerData = {};
 			level_data.layers.forEach(function(layer){
 				layerData[layer.name] = layer;
@@ -161,39 +161,35 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					this.state.addEntity(entity)
 				}.bind(this))
 			}
-
-			var outline = new PIXI.Graphics();
-			//this.container.addChild(outline);
-			outline.lineStyle(2, 0xFF0000);
-			//Trace Map
-			
-			//Find Start Pixel
-			var start = null;
-			var x = 1;
-			var y = 1;
-			while (!start){
-				if (this.getTile(x, y).data.passable){
-					start = [x-1,y-1];
-				}
-				x+=1
-				if (x>=this.width){
-					x=0;
-					y+=1;
-					if (y>=this.height){
-						break;
+		},
+		traceContour: function(attr,start){
+			if (start==undefined){
+				start = null;
+				var x = 1;
+				var y = 1;
+				while (!start){
+					if (this.getTile(x, y).data[attr]){
+						start = [x-1,y-1];
+					}
+					x+=1
+					if (x>=this.width){
+						x=0;
+						y+=1;
+						if (y>=this.height){
+							break;
+						}
 					}
 				}
 			}
-			
 			//Trace
 			var tracing = true;
 			var pos = start;
 			var vertexs = [];
 			while (tracing){
-				var kernal = [[this.getTile(pos[0], pos[1]).data.passable ? 1 : 0,
-								this.getTile(pos[0]+1, pos[1]).data.passable ? 1 : 0],[
-								this.getTile(pos[0], pos[1]+1).data.passable ? 1 : 0,
-								this.getTile(pos[0]+1, pos[1]+1).data.passable ? 1 : 0]]
+				var kernal = [[this.getTile(pos[0], pos[1]).data[attr] ? 1 : 0,
+								this.getTile(pos[0]+1, pos[1]).data[attr] ? 1 : 0],[
+								this.getTile(pos[0], pos[1]+1).data[attr] ? 1 : 0,
+								this.getTile(pos[0]+1, pos[1]+1).data[attr] ? 1 : 0]]
 				var composite = kernal[0][0] + kernal[0][1]*2 + kernal[1][0]*4 + kernal[1][1]*8;
 				if (composite==8||composite==12||composite==13){
 					vertexs.push([(pos[0]+1)*32,(pos[1]+1)*32])
@@ -212,23 +208,22 @@ define(['sge','./core','./entity'], function(sge, core, Entity){
 					break;
 				}
 			}
-			this.terrainOutline = [];
-			this.terrainOutline.push(vertexs[0]);
+
+			simplified = [];
+			simplified.push(vertexs[0]);
 			var last = vertexs[0];
-			var outlineScale=0.1;
-			outline.moveTo(last[0]*outlineScale,last[1]*outlineScale);
+			vertexs.push(last) //HACK TO CLOSE POLYGON
 			for (var i = 1; i < vertexs.length-1; i++) {
 				var vert = vertexs[i];
 				var next = vertexs[i+1];
-				outline.lineTo(vert[0]*outlineScale,vert[1]*outlineScale);
 				if (!(next[0]==last[0]||next[1]==last[1])){
-					this.terrainOutline.push(vert);
+
+					simplified.push(vert);
 				}
 				last = vert;
 			}
-			outline.lineTo(vertexs[0][0]*outlineScale,vertexs[0][1]*outlineScale);
-			console.log('Vertexs:', vertexs.length, this.terrainOutline.length);
-			//this.outline = outline;
+			console.log('Simple:', simplified)
+			return simplified;
 		},
 		load: function(url){
 			var defered = new sge.When.defer();

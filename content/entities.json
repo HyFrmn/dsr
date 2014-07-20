@@ -6,23 +6,31 @@
 	"data" : {
 		"chara" : {
 			"xform" : {},
-			"sprite" : { "src" : "orange", "offsety" : -16},
+			"sprite" : { "src" : "hero", "offsety" : -16},
 			"physics" : {},
-			"movement" : {}	
+			"movement" : {},
+			"chara" : { "control" : true, "direction" : "south" },
+			"survival" : {
+				"health" : 12
+			}
 		},
 		"pc" : {
 			"inherit" : "chara",
-			"pc" : {},
+			"pc" : { "control" : true },
 			"light"  : { "type" : "point_medium", "offsety" : -16, "enabled" : false},
 			"inventory" : {},
+			"minimap" : {"color" : "0"},
 			"animation" : {
-				"track" : "idle",
+				"track" : "idle_south",
 				"frames" : {
-					"idle" : [18],
-					"walk_north" : [0, 1, 2, 3, 4, 5, 6, 7, 8],
-					"walk_west" : [9, 10, 11, 12, 13, 14, 15, 16, 17],
-					"walk_south" : [18, 19, 20, 21, 22, 23, 24, 25, 26],
-					"walk_east" : [27, 28, 29, 30, 31, 32, 33, 34, 35]
+					"idle_north" : [0, 1, 2, 3, 4, 5, 6],
+					"idle_west" : [13, 14, 15, 16, 17, 18, 19],
+					"idle_south" : [26, 27, 28, 29, 30, 31, 32],
+					"idle_east"	: [39, 40, 41, 42, 43, 44, 45, 46],
+					"walk_north" : [105, 106, 107, 108, 109, 110, 111],
+					"walk_west" : [117,118, 119, 120, 121, 122, 123],
+					"walk_south" : [131, 132, 133, 134, 135, 136, 137],
+					"walk_east" : [143, 144, 145, 146, 147, 148, 149, 150]
 				}
 			}
 		},
@@ -39,6 +47,21 @@
 				"default_input" : "interact"
 			},
 			"physics" : { "width" : 32, "height" : 48, "mass" : -1, "offsety": -24 },
+			"electrical" : {}
+		},
+		"door.horizontal" : {
+			"inherit" : "interact",
+			"interact" : {},
+			"xform" : {},
+			"sprite" : { "src" : "door_horz", "offsety" : -32},
+			"script" : { "src" : "door" },
+			"door" : { "open" : false, "locked" : false, "horizontal" : true },
+			"light" : {"type" : "point_medium", "tint" : 16777164, "offsety" : 16, "enabled" : true},
+			"connection" : {
+				"output" : false,
+				"default_input" : "interact"
+			},
+			"physics" : { "width" : 4, "height" : 96, "mass" : -1, "offsety": -32 },
 			"electrical" : {}
 		},
 		"shelf" : {
@@ -96,6 +119,27 @@
 			},
 			"connection" : {
 				"output" : false
+			}
+		},
+		"sparks" : {
+			"xform" : {},
+			"light" : {},
+			"interact" : {
+				"toggle" : "light.enabled"
+			},
+			"connection" : {
+				"output" : false
+			},
+			"particles" : {
+				
+			},
+			"script" : { "src" : "sparks" },
+			"damageprofile" : {
+				"causeofdeath" : ["Watch out for sparks."],
+				"damage" : 3,
+				"type" : "electrical",
+				"offsetx" : 0,
+				"offsety" : 0
 			}
 		}
 	}

@@ -2,7 +2,7 @@ define(['sge','./core'], function(sge, core, Entity){
 	var LightSystem = core.DSRSystem.extend({
 		init: function(state){
 			this.state = state;
-			
+			this._lightUpdated = false;
 			this.container = new PIXI.DisplayObjectContainer();
 			this.state.mapContainer.addChild(this.container);
 
@@ -15,6 +15,7 @@ define(['sge','./core'], function(sge, core, Entity){
 		},
 		setup: function(){
 			this.map = this.state.getSystem('map');
+			renderer = this.state.getSystem('render');
 
 			this.shadow = new PIXI.Graphics();
 			this.shadow.beginFill(0);
@@ -25,7 +26,7 @@ define(['sge','./core'], function(sge, core, Entity){
 			this.shadowTexture = new PIXI.RenderTexture(this.map.width*this.map.tileSize, this.map.height*this.map.tileSize);
 			this.shadowSprite = new PIXI.Sprite(this.shadowTexture);
 			this.shadowSprite.blendMode = PIXI.blendModes.MULTIPLY;
-			//this.shadowSprite.mask = map.canopyMask;
+			//this.state.mapContainer.mask = this.fog;
 			this.container.addChild(this.fog);
 			this.container.addChild(this.shadowSprite);
 
@@ -41,88 +42,78 @@ define(['sge','./core'], function(sge, core, Entity){
 				this.shadowContainer.addChild(lightSprite);
 			}.bind(this));
 			//*/
+			//
+			//
+		},
+		updateLightMap: function(){
+			return;
+			if (this._lightUpdated){
+				
+			}
+			this._lightUpdated = true;
+			var pct = this.map.getTileAtPos(this.state.pc.xform.tx,this.state.pc.xform.ty);
+			if (pct.data.blocker){
+				pct = this.map.getTile(pct.x, pct.y-1)
+			}
+
+			this.fog.clear()
+			if (!pct.data.blocker){
+				while (!pct.data.blocker){
+					pct = this.map.getTile(pct.x, pct.y - 1);
+				}
+				var vertexs = this.map.traceContour([pct.x,pct.y], 'blocker')	
+				console.log('VERTEXS:', vertexs)
+				if (vertexs.length>0){
+					this.fog.beginFill(0x000000);
+					this.fog.moveTo(vertexs[0][0], vertexs[0][1]);
+					var last = vertexs[0];
+					for (var i = 1; i < vertexs.length; i++) {
+						var vert = vertexs[i];
+						this.fog.lineTo(vert[0],vert[1]);
+					}
+					this.fog.lineTo(vertexs[0][0],vertexs[0][1]);
+					this.fog.endFill();
+				}		
+			}
+
+			this.fog.endFill();
+
+			//*
+			this.fog.beginFill(0xFF0000);
+			this.map.getTiles().forEach(function(t){
+				if (t.data.blocker){
+					this.fog.drawRect(t.x * this.map.tileSize, t.y*this.map.tileSize, this.map.tileSize, this.map.tileSize);
+				}
+			}.bind(this));
+			//*/
+			this.fog.endFill();
 		},
 		addLight: function(entity){
 			var sprite = lightSprite = new PIXI.Sprite.fromFrame(entity.light.type + '-0');
 			sprite.position.x = entity.xform.tx  - sprite.width/2;
 			sprite.position.y = entity.xform.ty  - sprite.height/2;
 			sprite.blendMode = PIXI.blendModes.ADD;
+			sprite.mask = this.fog;
 			this.shadowContainer.addChild(sprite);
 			this._lights[entity.id] = sprite;
 			return sprite
 		},
 		_foo: true,
 		tick: function(delta, entities){
+			this.updateLightMap();
+			/*
 			this.map.getTiles().forEach(function(t){
 				t.data.visible=false;
 			});
+			*/
 
 			//Get Tile Player is On.
-			var pct = this.map.getTileAtPos(this.state.pc.xform.tx,this.state.pc.xform.ty);
-			if (pct.data.blocker){
-				pct = this.map.getTile(pct.x, pct.y-1)
-			}
+			
 
 			//Determin if current tile can block vis, and fill with visibility from current pos.
-			if (!pct.data.blocker){
-				this._foo = false;
-				this.lightFillScanline(
-					Math.floor(pct.x),
-					Math.floor(pct.y),
-					this.map.width,
-					this.map.height-1,
-					false,
-					//TEST
-					function(x, y){
-						var t= this.map.getTile(x,y);
-						if (t){
-							if ((((t.x-pct.x)*(t.x-pct.x)+(t.y-pct.y)*(t.y-pct.y)))<64){
-								if (t.data.fow){
-									t.data.fow = false;
-								}
-							}
-							if (t.data.doorHack){
-								if (t.y>pct.y){
-									t.data.visible=true;
-								}
-							}
-							return !t.data.blocker;
-						} else {
 
-							console.log('Light Fill Error:', x, y)
-						}
-					}.bind(this),
-					//FILL
-					function(x, y){
-						var t= this.map.getTile(x,y);
-						if (t){
-							t.data.visible=true;
-						} else {
-							console.log('Light Fill Error:', x, y)
-						}
-					}.bind(this)
-				);
-			}
-
-			//Update Fog of War.
-			/*
-			this.map.getTile(pct.x,pct.y).data.fow = false;
-			var rad = 4;
-			for (var dx = -rad; dx < rad+1; dx++) {
-				for (var dy = -rad; dy < rad+1; dy++) {
-					dist = (dx*dx)+(dy*dy);
-					if (dist<(rad*rad)){
-						var tile = this.map.getTile(pct.x+dx,pct.y+dy);
-						if (tile){
-							if (tile.data.blocker){
-								tile.data.fow = false;
-							}
-						}
-					}
-				}
-			}
 			//*/
-			//*
+			/*
 			this.fog.clear();
 			this.fog.beginFill(0x000000);
 			this.map.getTiles().forEach(function(t){
@@ -132,15 +123,9 @@ define(['sge','./core'], function(sge, core, Entity){
 			}.bind(this));
 			this.fog.endFill();
 			//*/
-			/*
-			this.fog.beginFill(0xFF0000);
-			this.map.getTiles().forEach(function(t){
-				if (t.data.blocker){
-					this.fog.drawRect(t.x * this.map.tileSize, t.y*this.map.tileSize, this.map.tileSize, this.map.tileSize);
-				}
-			}.bind(this));
+			//*
+			
 			//*/
-			this.fog.endFill();
 			
 			for (var i = entities.length - 1; i >= 0; i--) {
 				var entity = entities[i];
@@ -148,21 +133,25 @@ define(['sge','./core'], function(sge, core, Entity){
 					if (this._lights[entity.id]===undefined){
 						this.addLight(entity);
 					}
+					var _intensity = entity.light.intensity;
 					var sprite = this._lights[entity.id];
 					if (entity.light.strobe>0){
 						if (entity.light._life==undefined){
 							entity.light._life = 0;
 						}
 						entity.light._life += delta;
-						entity.light.intensity = Math.abs(Math.sin(entity.light._life*entity.light.strobe));
+						_intensity = Math.abs(Math.sin(entity.light._life*entity.light.strobe)) * _intensity;
 						
 					}
-
+					if (entity.light.n_freq){
+						_intensity = ((noise.perlin2(this.state._time*entity.light.n_freq,0)/2 + 0.5) * entity.light.n_amp) + entity.light.intensity * (1 - entity.light.n_amp);
+						//console.log(_intensity,this.state._time)
+					}
 
 					sprite.position.x = entity.xform.tx   - sprite.width/2 + entity.light.offsetx;
 					sprite.position.y = entity.xform.ty   - sprite.height/2 + entity.light.offsety;
 					sprite.tint = entity.light.tint;
-					sprite.alpha = entity.light.intensity;
+					sprite.alpha = _intensity;
 					var tile = this.map.getTileAtPos(entity.xform.tx, entity.xform.ty);
 					sprite.visible = entity.light.enabled && tile.data.visible;
 					

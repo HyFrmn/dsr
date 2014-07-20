@@ -8,8 +8,11 @@
     ],
     "sprites" : [
         ["content/sprites/orange.png", 64, 64],
+        ["content/sprites/hero.png", 64, 64],
         ["content/sprites/door.png", 32, 96],
+        ["content/sprites/door_horz.png", 32, 96],
         ["content/sprites/switch.png", 32, 64],
+        ["content/sprites/smoke.png", 128, 128],
         ["content/sprites/gsc.png", 32, 64],
         ["content/sprites/shelves.png", 32, 64],
         ["content/lights/flashlight_basic.png", 256,256],
@@ -27,6 +30,7 @@
     "scripts" : [
         "door",
         "switch",
-        "container"
+        "gsc",
+        "sparks"
     ]
 }
